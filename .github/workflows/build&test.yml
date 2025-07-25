@@ -1,0 +1,35 @@
+name: Build Spring Boot App and Test Features
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Building An Spring boot APP
+        run: echo "Building An Spring boot APP"
+
+      - name: Checkout the Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Grant Execution Permission for Maven wrapper
+        run: chmod +x mvnw
+
+      - name: Build with Maven
+        run: ./mvnw clean install --no-transfer-progress
+
+      - name: Run Tests
+        run: ./mvnw test --no-transfer-progress
