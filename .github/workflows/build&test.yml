@@ -13,12 +13,6 @@ jobs:
 
 
     steps:
-      - name: Change to complete directory
-        working-directory: complete
-        run: |
-          chmod +x mvnw
-          ./mvnw clean install
-
       - name: Building An Spring boot APP
         run: echo "Building An Spring boot APP"
 
@@ -58,3 +52,9 @@ jobs:
 
       - name: Run Tests
         run: ./mvnw test --no-transfer-progress
+
+#      - name: Change to complete directory
+#        working-directory: complete
+#        run: |
+#          chmod +x mvnw
+#          ./mvnw clean install
