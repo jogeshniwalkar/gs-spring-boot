@@ -31,11 +31,23 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Grant Execution Permission for Maven wrapper
-        run: chmod +x mvnw
+      - name: Grant execute permission to mvnw
+        run: chmod +x complete/mvnw
 
-      - name: Build with Maven
-        run: ./mvnw clean install --no-transfer-progress
+      - name: Build using Maven Wrapper
+        run: ./complete/mvnw clean install
+
+      - name: Grant execute permission to mvnw
+        run: chmod +x complete/mvnw
+
+      - name: Build using Maven Wrapper
+        run: ./complete/mvnw clean install --no-transfer-progress
+
+#      - name: Grant Execution Permission for Maven wrapper
+#        run: chmod +x mvnw
+
+#      - name: Build with Maven
+#        run: ./mvnw clean install --no-transfer-progress
 
       - name: Run Tests
         run: ./mvnw test --no-transfer-progress
