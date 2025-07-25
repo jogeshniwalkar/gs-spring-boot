@@ -43,6 +43,8 @@ jobs:
 #      - name: Build with Maven
 #        run: ./mvnw clean install --no-transfer-progress
 
+      - name: Set up working directory
+        run: cd complete
 
       - name: Navigate to project directory
         working-directory: complete
