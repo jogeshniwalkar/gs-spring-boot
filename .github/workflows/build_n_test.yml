@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - develop
+      - main
 env:
   IMAGE_NAME: jogesh22/spring-boot-app
   COMMIT_ID:  ${{ github.sha }}
