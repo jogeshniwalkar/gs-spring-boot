@@ -74,31 +74,27 @@ jobs:
           docker push $IMAGE_NAME:latest
 
 
+  notify:
+    name: Notify team on failure (placeholder)
+    if: failure()
+    uses: dawidd6/action-send-mail@v3
+    with:
+      server_address: smtp.gmail.com
+      server_port: 587
+      username: niwalkar.jogesh@gmail.com
+      password: ${{ secrets.GMAIL_APP_PASSWORD }}
+      subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
+      to: niwalkar.jogesh@gmail.com
+      from: jogeshniwalkar
+      body: |
 
+        Hello Team,
 
-#
-#  notify:
-#    needs: docker-build-and-push
-#  Notify team on failure (placeholder)
-#    if: failure()
-#    uses: dawidd6/action-send-mail@v3
-#    with:
-#      server_address: smtp.gmail.com
-#      server_port: 587
-#      username: niwalkar.jogesh@gmail.com
-#      password: ${{ secrets.GMAIL_APP_PASSWORD }}
-#      subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
-#      to: niwalkar.jogesh@gmail.com
-#      from: jogeshniwalkar
-#      body: |
-#
-#        Hello Team,
-#
-#        The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
-#        Repository: jogeshniwalkar/gs-spring-boot
-#        Branch: develop
-#        Actor: jogeshniwalkar
-#        Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
-#
-#        Please check the logs and take action.
-#        -- GitHub Actions
+        The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
+        Repository: jogeshniwalkar/gs-spring-boot
+        Branch: develop
+        Actor: jogeshniwalkar
+        Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
+
+        Please check the logs and take action.
+        -- GitHub Actions
