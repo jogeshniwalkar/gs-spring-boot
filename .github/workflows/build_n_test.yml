@@ -58,7 +58,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: 'jogesh22'
-          password: ${{ secrets.docker-hub-token }}
+          password: ${{ secrets.DOCKER-HUB-TOKEN }}
 
       - name: Print Environment Variables
         run: |
