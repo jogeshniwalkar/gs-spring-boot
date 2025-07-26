@@ -1,0 +1,104 @@
+name: Build Spring Boot App and Run Automated Tests
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+      - main
+env:
+  IMAGE_NAME: jogesh22/spring-boot-app
+  COMMIT_ID:  ${{ github.sha }}
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Building An Spring boot APP
+        run: echo "Building An Spring boot APP"
+
+      - name: Checkout the Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build the project using Maven wrapper
+        working-directory: complete
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+        continue-on-error: false
+
+      - name: Run Unit & Integration Tests
+        working-directory: complete
+        run: ./mvnw test --no-transfer-progress
+        continue-on-error: false
+
+      - name: Upload Test Reports (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: complete/target/surefire-reports/
+        continue-on-error: false
+
+  docker-build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login in to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: 'jogesh22'
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Print Environment Variables
+        run: |
+          echo "Branch is ${{ github.ref }}"
+          echo "Image is $IMAGE_NAME"
+
+      - name: Build,  Tag and Push Docker Image
+        run: |
+          docker build -t $IMAGE_NAME:${{ github.sha }} .
+          docker tag $IMAGE_NAME:${{ github.sha }}  $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:${{ github.sha }}   
+          docker push $IMAGE_NAME:latest
+
+
+
+
+#
+#  notify:
+#    needs: docker-build-and-push
+#  Notify team on failure (placeholder)
+#    if: failure()
+#    uses: dawidd6/action-send-mail@v3
+#    with:
+#      server_address: smtp.gmail.com
+#      server_port: 587
+#      username: niwalkar.jogesh@gmail.com
+#      password: ${{ secrets.GMAIL_APP_PASSWORD }}
+#      subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
+#      to: niwalkar.jogesh@gmail.com
+#      from: jogeshniwalkar
+#      body: |
+#
+#        Hello Team,
+#
+#        The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
+#        Repository: jogeshniwalkar/gs-spring-boot
+#        Branch: develop
+#        Actor: jogeshniwalkar
+#        Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
+#
+#        Please check the logs and take action.
+#        -- GitHub Actions
