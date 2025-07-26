@@ -1,4 +1,4 @@
-name: Build Spring Boot App and Test Features
+name: Build Spring Boot App and Run Automated Tests
 on:
   push:
     branches:
@@ -10,7 +10,6 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
-
 
     steps:
       - name: Building An Spring boot APP
@@ -43,16 +42,14 @@ jobs:
 #      - name: Build with Maven
 #        run: ./mvnw clean install --no-transfer-progress
 
-      - name: Set up working directory
-        run: cd complete
-
-      - name: Navigate to project directory
+      - name: Build the project using Maven wrapper
         working-directory: complete
         run: |
-            chmod +x mvnw
-            ./mvnw clean install
+          chmod +x mvnw
+          ./mvnw clean install
 
       - name: Run Tests
+        working-directory: complete
         run: ./mvnw test --no-transfer-progress
 
 #      - name: Change to complete directory
