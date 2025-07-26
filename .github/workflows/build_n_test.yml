@@ -23,37 +23,65 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-#
-#      - name: Grant execute permission to mvnw
-#        run: chmod +x complete/mvnw
-#
-#      - name: Build using Maven Wrapper
-#        run: ./complete/mvnw clean install
-#
-#      - name: Grant execute permission to mvnw
-#        run: chmod +x complete/mvnw
-
-#      - name: Build using Maven Wrapper
-#        run: ./complete/mvnw clean install --no-transfer-progress
-
-#      - name: Grant Execution Permission for Maven wrapper
-#        run: chmod +x mvnw
-
-#      - name: Build with Maven
-#        run: ./mvnw clean install --no-transfer-progress
+      #
+      #      - name: Grant execute permission to mvnw
+      #        run: chmod +x complete/mvnw
+      #
+      #      - name: Build using Maven Wrapper
+      #        run: ./complete/mvnw clean install
+      #
+      #      - name: Grant execute permission to mvnw
+      #        run: chmod +x complete/mvnw
+      
+      #      - name: Build using Maven Wrapper
+      #        run: ./complete/mvnw clean install --no-transfer-progress
+      
+      #      - name: Grant Execution Permission for Maven wrapper
+      #        run: chmod +x mvnw
+      
+      #      - name: Build with Maven
+      #        run: ./mvnw clean install --no-transfer-progress
 
       - name: Build the project using Maven wrapper
         working-directory: complete
         run: |
           chmod +x mvnw
           ./mvnw clean install
+        continue-on-error: false
 
-      - name: Run Tests
+      - name: Run Unit & Integration Tests
         working-directory: complete
         run: ./mvnw test --no-transfer-progress
+        continue-on-error: false
 
-#      - name: Change to complete directory
-#        working-directory: complete
-#        run: |
-#          chmod +x mvnw
-#          ./mvnw clean install
+      - name: Upload Test Reports (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: complete/target/surefire-reports/
+        continue-on-error: false
+
+      - name: Notify team on failure (placeholder)
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: niwalkar.jogesh@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
+          to: niwalkar.jogesh@gmail.com
+          from: jogeshniwalkar
+          body: |
+
+            Hello Team,
+
+            The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
+            Repository: jogeshniwalkar/gs-spring-boot
+            Branch: develop
+            Actor: jogeshniwalkar
+            Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
+  
+            Please check the logs and take action.
+            -- GitHub Actions
