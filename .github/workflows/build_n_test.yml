@@ -50,7 +50,7 @@ jobs:
         continue-on-error: false
 
       - name: Run Unit & Integration Tests
-        working-directory: complete
+        working-directory: completea
         run: ./mvnw test --no-transfer-progress
         continue-on-error: false
 
@@ -59,11 +59,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: complete/target/surefire-reports/
+          path: completea/target/surefire-reports/
         continue-on-error: false
 
       - name: Notify team on failure (placeholder)
-        if: success()
+        if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -82,6 +82,6 @@ jobs:
             Branch: develop
             Actor: jogeshniwalkar
             Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
-  
+            
             Please check the logs and take action.
             -- GitHub Actions
