@@ -10,8 +10,8 @@ RUN mvn clean package -DskipTests
 
 # Runtime Stage:
 
-#FROM eclipse-temurin:17-jre-jammy
-FROM gcr.io/distroless/java21:nonroot
+FROM eclipse-temurin:17-jre-jammy
+#FROM gcr.io/distroless/java21:nonroot
 WORKDIR     /app
 COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
