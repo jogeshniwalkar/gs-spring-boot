@@ -6,8 +6,12 @@ on:
   pull_request:
     branches:
       - develop
+env:
+  IMAGE_NAME: jogesh22/spring-boot-app
+  GIT_COMMIT:  ${{ github.sha }}
+
 jobs:
-  build:
+  build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
 
@@ -23,24 +27,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      #
-      #      - name: Grant execute permission to mvnw
-      #        run: chmod +x complete/mvnw
-      #
-      #      - name: Build using Maven Wrapper
-      #        run: ./complete/mvnw clean install
-      #
-      #      - name: Grant execute permission to mvnw
-      #        run: chmod +x complete/mvnw
-      
-      #      - name: Build using Maven Wrapper
-      #        run: ./complete/mvnw clean install --no-transfer-progress
-      
-      #      - name: Grant Execution Permission for Maven wrapper
-      #        run: chmod +x mvnw
-      
-      #      - name: Build with Maven
-      #        run: ./mvnw clean install --no-transfer-progress
 
       - name: Build the project using Maven wrapper
         working-directory: complete
@@ -62,26 +48,55 @@ jobs:
           path: complete/target/surefire-reports/
         continue-on-error: false
 
-      - name: Notify team on failure (placeholder)
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
+  docker-build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login in to Dockerhub
+        uses: docker/login-action@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: niwalkar.jogesh@gmail.com
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
-          to: niwalkar.jogesh@gmail.com
-          from: jogeshniwalkar
-          body: |
+          username: 'jogesh22'
+          password: ${{ secrets.docker-hub-token }}
 
-            Hello Team,
+      - name: Print Environment Variables
+        run: |
+          echo "Branch is ${{ github.ref }}"
+          echo "Image is $IMAGE_NAME"
 
-            The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
-            Repository: jogeshniwalkar/gs-spring-boot
-            Branch: develop
-            Actor: jogeshniwalkar
-            Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
-            
-            Please check the logs and take action.
-            -- GitHub Actions
+      - name: Build Docker Image
+        run: docker build -t $IMAGE_NAME:${{ github.sha }} .
+
+      - name: Push Docker Image
+        run: docker push $IMAGE_NAME:${{ github.sha }}
+
+
+
+
+
+  notify:
+    needs: docker-build-and-push
+    #    : Notify team on failure (placeholder)
+    if: failure()
+    uses: dawidd6/action-send-mail@v3
+    with:
+      server_address: smtp.gmail.com
+      server_port: 587
+      username: niwalkar.jogesh@gmail.com
+      password: ${{ secrets.GMAIL_APP_PASSWORD }}
+      subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
+      to: niwalkar.jogesh@gmail.com
+      from: jogeshniwalkar
+      body: |
+        
+        Hello Team,
+        
+        The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
+        Repository: jogeshniwalkar/gs-spring-boot
+        Branch: develop
+        Actor: jogeshniwalkar
+        Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
+        
+        Please check the logs and take action.
+        -- GitHub Actions
