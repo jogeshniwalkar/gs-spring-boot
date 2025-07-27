@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - main
   pull_request:
     branches:
       - develop
@@ -63,7 +64,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-
+      - name: Upload coverage report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: jacoco-report
+            path: target/site/jacoco/index.html
 
   docker-build-and-push:
     needs: sonarcloud-scan
