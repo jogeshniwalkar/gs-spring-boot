@@ -55,12 +55,12 @@ jobs:
           path: complete/target/surefire-reports/
         continue-on-error: false
 
-      - name: Upload Jacoco Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: complete/target/site/jacoco
+#      - name: Upload Jacoco Report
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: jacoco-report
+#          path: complete/target/site/jacoco
 
       - name: Upload Compiled Classes
         uses: actions/upload-artifact@v4
@@ -84,11 +84,11 @@ jobs:
           name: compiled-classes
           path: complete/target/classes
 
-      - name: Download Jacoco Report
-        uses: actions/download-artifact@v4
-        with:
-          name: jacoco-report
-          path: complete/target/site/jacoco/
+#      - name: Download Jacoco Report
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: jacoco-report
+#          path: complete/target/site/jacoco/
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
