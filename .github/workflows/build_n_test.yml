@@ -69,6 +69,8 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=jogeshniwalkar
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -78,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
             name: jacoco-report
-            path: target/site/jacoco/html.html
+            path: target/site/jacoco/*
 
   docker-build-and-push:
     needs: sonarcloud-scan
