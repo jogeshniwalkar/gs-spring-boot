@@ -9,7 +9,9 @@ on:
       - main
 env:
   IMAGE_NAME: jogesh22/spring-boot-app
-  COMMIT_ID:  ${{ github.sha }}
+  COMMIT_ID: ${{ github.sha }}
+  JAVA_VERSION: 21
+  SONAR_PROJECT_KEY: jogeshniwalkar_gs-spring-boot
 
 jobs:
   build-and-test:
@@ -17,9 +19,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Building An Spring boot APP
-        run: echo "Building An Spring boot APP"
-
       - name: Checkout the Code
         uses: actions/checkout@v4
 
@@ -28,12 +27,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Build the project using Maven wrapper
         working-directory: complete
         run: |
           chmod +x mvnw
-          ./mvnw clean install
+          ./mvnw clean verify
         continue-on-error: false
 
       - name: Run Unit & Integration Tests
@@ -49,8 +49,24 @@ jobs:
           path: complete/target/surefire-reports/
         continue-on-error: false
 
-  docker-build-and-push:
+  sonarcloud-scan:
     needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=jogeshniwalkar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+
+  docker-build-and-push:
+    needs: sonarcloud-scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -74,31 +90,30 @@ jobs:
           docker push $IMAGE_NAME:latest
 
 
-
-
-#
-#  notify:
-#    needs: docker-build-and-push
-#  Notify team on failure (placeholder)
-#    if: failure()
-#    uses: dawidd6/action-send-mail@v3
-#    with:
-#      server_address: smtp.gmail.com
-#      server_port: 587
-#      username: niwalkar.jogesh@gmail.com
-#      password: ${{ secrets.GMAIL_APP_PASSWORD }}
-#      subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
-#      to: niwalkar.jogesh@gmail.com
-#      from: jogeshniwalkar
-#      body: |
-#
-#        Hello Team,
-#
-#        The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
-#        Repository: jogeshniwalkar/gs-spring-boot
-#        Branch: develop
-#        Actor: jogeshniwalkar
-#        Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
-#
-#        Please check the logs and take action.
-#        -- GitHub Actions
+  notify:
+    name: Notify team on failure
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: niwalkar.jogesh@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "🚨 Build/Test Failed: ${{ github.workflow }}"
+          to: niwalkar.jogesh@gmail.com
+          from: ${{ github.actor }}
+          body: |
+            
+            Hello Team,
+            
+            The GitHub Actions workflow **Build and Test Spring Boot App** has failed.
+            Repository: jogeshniwalkar/gs-spring-boot
+            Branch: develop
+            Actor: jogeshniwalkar
+            Run URL: https://github.com/jogeshniwalkar/gs-spring-boot/actions/runs/${{ github.run_id }}
+            
+            Please check the logs and take action.
+            -- GitHub Actions
