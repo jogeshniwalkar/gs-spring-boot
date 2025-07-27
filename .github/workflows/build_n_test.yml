@@ -129,6 +129,7 @@ jobs:
           echo "Image is $IMAGE_NAME"
 
       - name: Build,  Tag and Push Docker Image
+        working-directory: complete
         run: |
           docker build -t $IMAGE_NAME:${{ github.sha }} .
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
