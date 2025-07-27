@@ -8,6 +8,7 @@ on:
     branches:
       - develop
       - main
+  workflow_dispatch:
 env:
   IMAGE_NAME: jogesh22/spring-boot-app
   COMMIT_ID: ${{ github.sha }}
@@ -20,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: github metadata
+        run: echo ${{github}}
       - name: Checkout the Code
         uses: actions/checkout@v4
 
