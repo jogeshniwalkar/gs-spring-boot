@@ -22,8 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: github metadata
-        run:  echo "${{  toJSON(github) }}"
+      - name: Print GitHub metadata
+        run: echo '${{ toJSON(github) }}'
 
       - name: Checkout the Code
         uses: actions/checkout@v4
