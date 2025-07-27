@@ -55,6 +55,13 @@ jobs:
           path: complete/target/surefire-reports/
         continue-on-error: false
 
+      - name: Upload Jacoco Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: complete/target/site/jacoco
+
       - name: Upload Compiled Classes
         uses: actions/upload-artifact@v4
         with:
@@ -67,11 +74,22 @@ jobs:
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v4
+
+      - name: Prepare directory for binaries
+        run: mkdir -p complete/target/classes
+
       - name: Download Compiled Classes
         uses: actions/download-artifact@v4
         with:
           name: compiled-classes
           path: complete/target/classes
+
+      - name: Download Jacoco Report
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: complete/target/site/jacoco/
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
         with:
@@ -80,7 +98,7 @@ jobs:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=jogeshniwalkar
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.java.binaries=complete/target/classes
+            -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
