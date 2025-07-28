@@ -27,7 +27,7 @@ jobs:
     secrets: inherit
     #    secrets: ${{ secrets.DOCKER_HUB_TOKEN }}
     with:
-      docker_username: 'jogesh22'
+      docker_username: "jogesh22"
       image_name: 'spring-boot-app'
 
   notify-email:
