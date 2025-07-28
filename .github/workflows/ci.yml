@@ -13,8 +13,3 @@ jobs:
     uses: jogeshniwalkar/devops_central/.github/workflows/build-and-test.yml@develop
     with:
       java_version: '17'
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-

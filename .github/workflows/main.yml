@@ -1,10 +1,10 @@
 name: CI Pipeline for Spring---Boot App (via Reusable Workflow)
 
 on:
-  push:
-    branches: [ develop, main ]
-  pull_request:
-    branches: [ develop, main ]
+#  push:
+#    branches: [ develop, main ]
+#  pull_request:
+#    branches: [ develop, main ]
   workflow_dispatch:
 
 jobs:
