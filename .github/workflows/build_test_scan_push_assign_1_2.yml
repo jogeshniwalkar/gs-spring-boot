@@ -1,13 +1,13 @@
 name: Build Spring Boot App and Run Automated Tests
 on:
-  push:
-    branches:
-      - develop
-      - main
-  pull_request:
-    branches:
-      - develop
-      - main
+#  push:
+#    branches:
+#      - develop
+#      - main
+#  pull_request:
+#    branches:
+#      - develop
+#      - main
   workflow_dispatch:
 env:
   IMAGE_NAME: spring-boot-app
