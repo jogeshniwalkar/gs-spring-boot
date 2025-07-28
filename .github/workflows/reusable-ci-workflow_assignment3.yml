@@ -97,7 +97,7 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   docker-build-and-push:
     needs: sonarcloud-scan
     runs-on: ubuntu-latest
@@ -117,19 +117,12 @@ jobs:
           IMAGE_TAG=${DOCKER_USERNAME}/${IMAGE_NAME}:${GITHUB_SHA}
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
           COMMIT_ID=${{ github.sha }}
-#          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
-#          IMAGE=${{ inputs.docker_username }}/${{ inputs.image_name }}
           echo "Building $IMAGE_TAG"
           docker build -t $IMAGE_TAG .
-               
-#          docker build -t $DOCKER_USERNAME/$IMAGE:$COMMIT_ID .
-               
-         
-         docker tag $IMAGE_TAG $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:${GITHUB_SHA}
-         docker tag $IMAGE_TAG $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:latest
-         
-         docker push $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:${GITHUB_SHA}
-         docker push $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:latest
+          docker tag $IMAGE_TAG $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:${GITHUB_SHA}
+          docker tag $IMAGE_TAG $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:latest
+          docker push $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:${GITHUB_SHA}
+          docker push $DOCKER_USERNAME/${IMAGE_NAME}-${BRANCH_NAME}:latest
 
   notify:
     if: failure()
