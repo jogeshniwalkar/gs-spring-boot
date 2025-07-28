@@ -1,0 +1,40 @@
+# payment-service/.github/workflows/ci.yml
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+
+jobs:
+  build-and-test:
+    uses: jogeshniwalkar/devops_central/.github/workflows/build-and-test.yml@develop
+    with:
+      java_version: '17'
+
+  sonarcloud-scan:
+    needs: build-and-test
+    uses: jogeshniwalkar/devops_central/.github/workflows/sonarcloud-scan.yml@develop
+    secrets: inherit
+    with:
+      sonar_project_key: 'jogeshniwalkar_gs-spring-boot'
+
+  docker-build-and-push:
+    needs: sonarcloud-scan
+    uses: jogeshniwalkar/devops_central/.github/workflows/docker-push.yml@develop
+    secrets: inherit
+    #    secrets: ${{ secrets.DOCKER_HUB_TOKEN }}
+    with:
+      docker_username: "jogesh22"
+      image_name: 'spring-boot-app'
+
+  notify-email:
+    if: always()
+    needs: [ build-and-test, sonarcloud-scan, docker-build-and-push ]
+    uses: jogeshniwalkar/devops_central/.github/workflows/notify-email.yml@develop
+    secrets: inherit
+#    secrets: ${{secrets.GMAIL_APP_PASSWORD}}
+
+
