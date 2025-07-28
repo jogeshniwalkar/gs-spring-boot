@@ -20,8 +20,6 @@ jobs:
     secrets: inherit
     with:
       sonar_project_key: "jogeshniwalkar_gs-spring-boot"
-      upload_reports: 'true'
-
 
   docker-build-and-push:
     needs: sonarcloud-scan
