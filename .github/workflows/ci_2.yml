@@ -1,0 +1,28 @@
+name: CI Pipeline2
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+  workflow_dispatch:
+#env:
+#  IMAGE_NAME: spring-boot-app
+#  COMMIT_ID: ${{ github.sha }}
+#  JAVA_VERSION: 21
+#  SONAR_PROJECT_KEY: jogeshniwalkar_gs-spring-boot
+#  DOCKER_USERNAME: jogesh22
+
+
+jobs:
+  ci2:
+    uses: jogeshniwalkar/devops_central/.github/workflows/orchestrator-ci.yml@develop
+    with:
+      java_version: "21"
+      sonar_project_key: "jogeshniwalkar_gs-spring-boot"
+      docker_username: "jogesh22"
+      image_name: "spring-boot-app"
+    secrets: inherit
+# comment
+#      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+#      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+
