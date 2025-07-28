@@ -11,6 +11,7 @@ on:
 #  SONAR_PROJECT_KEY: jogeshniwalkar_gs-spring-boot
 #  DOCKER_USERNAME: jogesh22
 
+
 jobs:
   ci2:
     uses: jogeshniwalkar/devops_central/.github/workflows/orchestrator-ci.yml@develop
@@ -20,6 +21,7 @@ jobs:
       docker_username: "jogesh22"
       image_name: "spring-boot-app"
     secrets: inherit
+# comment
 #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 #      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 #      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
