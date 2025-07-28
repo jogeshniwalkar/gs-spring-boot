@@ -47,18 +47,17 @@ jobs:
 
       - name: Fail on High/Critical Vulnerabilities
         run: |
-               SARIF_FILE="sarif-results/${{ matrix.language }}.sarif"
-               echo "Checking SARIF at $SARIF_FILE"
-          
-          # Count number of issues with 'problem.severity' of high or critical
-               COUNT=$(jq '[.runs[].results[] | select(.level=="error" or .level=="warning")] | length' "$SARIF_FILE")
-               
-               echo "Found $COUNT high/critical vulnerabilities"
-               
-               if [ "$COUNT" -gt 0 ]; then
-               echo "Failing job due to high/critical CodeQL findings"
-               exit 1
-               else
-               echo "No high/critical vulnerabilities found"
-               fi
+          SARIF_FILE="sarif-results/${{ matrix.language }}.sarif"
+          echo "Checking SARIF at $SARIF_FILE"
+
+          COUNT=$(jq '[.runs[].results[] | select(.level=="error" or .level=="warning")] | length' "$SARIF_FILE")
+
+          echo "Found $COUNT high/critical vulnerabilities"
+
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Failing job due to high/critical CodeQL findings"
+            exit 1
+          else
+            echo "No high/critical vulnerabilities found"
+          fi
         shell: bash
