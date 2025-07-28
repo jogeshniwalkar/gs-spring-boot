@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main, develop ]
   schedule:
-    - cron: '*/10 * * * *'  # Weekly scan on Monday at 3 AM
+    - cron: '*/5 * * * *'  # Weekly scan on Monday at 3 AM
   workflow_dispatch:
 
 jobs:
@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: setting working directory
+        working-directory: complete
+        run: |
+          echo "current dir"
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -38,3 +42,24 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          output: sarif-results
+
+#      ✅ Parse SARIF and fail on high/critical severity
+      - name: Fail on High/Critical Vulnerabilities
+        run: |
+          SARIF_FILE="sarif-results/${{ matrix.language }}.sarif"
+          echo "Checking SARIF at $SARIF_FILE"
+        
+        # Count number of issues with 'problem.severity' of high or critical
+          COUNT=$(jq '[.runs[].results[] | select(.level=="error" or .level=="warning")] | length' "$SARIF_FILE")
+        
+          echo "Found $COUNT high/critical vulnerabilities"
+        
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Failing job due to high/critical CodeQL findings"
+            exit 1
+          else
+            echo "No high/critical vulnerabilities found"
+          fi
+        shell: bash
