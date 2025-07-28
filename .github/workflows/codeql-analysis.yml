@@ -45,7 +45,6 @@ jobs:
         with:
           output: sarif-results
 
-#      ✅ Parse SARIF and fail on high/critical severity
       - name: Fail on High/Critical Vulnerabilities
         run: |
           SARIF_FILE="sarif-results/${{ matrix.language }}.sarif"
