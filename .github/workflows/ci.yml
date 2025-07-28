@@ -35,8 +35,6 @@ jobs:
     needs: [ build-and-test, sonarcloud-scan, docker-build-and-push ]
     uses: jogeshniwalkar/devops_central/.github/workflows/notify-email.yml@develop
     secrets: inherit
-    with:
-      upload_reports: 'true'
 #    secrets: ${{secrets.GMAIL_APP_PASSWORD}}
 
 
