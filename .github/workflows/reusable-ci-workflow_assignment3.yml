@@ -121,7 +121,7 @@ jobs:
           docker build -t $IMAGE_TAG .
           docker tag $IMAGE_TAG ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:${{ github.sha }}
           docker tag $IMAGE_TAG ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:latest
-          docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}}-${BRANCH_NAME}:${{ github.sha }}
+          docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:${{ github.sha }}
           docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:latest
 
   notify:
