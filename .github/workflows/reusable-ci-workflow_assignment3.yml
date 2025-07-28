@@ -128,7 +128,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [build-and-test,sonarcloud-scan,docker-build-and-push]
-    if: success()
+    if: always()
     steps:
       - name: Send Failure Email
         uses: dawidd6/action-send-mail@v3
