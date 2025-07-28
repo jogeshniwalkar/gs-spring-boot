@@ -17,7 +17,6 @@ jobs:
       security-events: write  # required for reporting results to GitHub
       actions: read
       contents: read
-
     strategy:
       fail-fast: false
       matrix:
@@ -26,10 +25,23 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: 'temurin'
+          cache: 'maven'
+
       - name: setting working directory
         working-directory: complete
         run: |
           echo "current dir"
+
+      - name: Build with Maven
+        working-directory: complete
+        run: |
+          chmod +x mvnw
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
