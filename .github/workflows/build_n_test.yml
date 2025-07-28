@@ -10,7 +10,7 @@ on:
       - main
   workflow_dispatch:
 env:
-  IMAGE_NAME: jogesh22/spring-boot-app
+  IMAGE_NAME: spring-boot-app
   COMMIT_ID: ${{ github.sha }}
   JAVA_VERSION: 21
   SONAR_PROJECT_KEY: jogeshniwalkar_gs-spring-boot
@@ -131,12 +131,12 @@ jobs:
       - name: Build,  Tag and Push Docker Image
         working-directory: complete
         run: |
-          docker build -t $IMAGE_NAME:${{ github.sha }} .
+          docker build -t $DOCKER_USERNAME/$IMAGE_NAME:${{ github.sha }} .
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
-          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME-${BRANCH_NAME}:${{ github.sha }}
-          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME-${BRANCH_NAME}:latest
-          docker push $IMAGE_NAME-${BRANCH_NAME}:${{ github.sha }}
-          docker push $IMAGE_NAME-${BRANCH_NAME}:latest
+          docker tag $DOCKER_USERNAME/$IMAGE_NAME:${{ github.sha }} $DOCKER_USERNAME/$IMAGE_NAME-$BRANCH_NAME:${{ github.sha }}
+          docker tag $DOCKER_USERNAME/$IMAGE_NAME:${{ github.sha }} $DOCKER_USERNAME/$IMAGE_NAME-$BRANCH_NAME:latest
+          docker push $DOCKER_USERNAME/$IMAGE_NAME-$BRANCH_NAME:${{ github.sha }}
+          docker push $DOCKER_USERNAME/$IMAGE_NAME-$BRANCH_NAME:latest
 
 
   notify:
