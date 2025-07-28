@@ -49,6 +49,7 @@ jobs:
           languages: ${{ matrix.language }}
 
       - name: Build the application
+        working-directory: complete
         run: |
           ./mvnw clean install -DskipTests
 
