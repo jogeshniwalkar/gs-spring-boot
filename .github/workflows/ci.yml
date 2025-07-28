@@ -13,3 +13,12 @@ jobs:
     uses: jogeshniwalkar/devops_central/.github/workflows/build-and-test.yml@develop
     with:
       java_version: '17'
+
+  sonarcloud-scan:
+    needs: build-and-test
+    uses: jogeshniwalkar/devops_central/.github/workflows/sonarcloud-scan.yml@develop
+    with:
+      sonar_project_key: "jogeshniwalkar_gs-spring-boot"
+    secrets: inherit
+
+
