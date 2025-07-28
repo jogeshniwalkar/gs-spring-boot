@@ -114,14 +114,14 @@ jobs:
         working-directory: complete
         run: |
           
-          IMAGE_TAG=${{ inputs.docker_username }}/${{ inputs.image_name }}:${{GITHUB_SHA}}
+          IMAGE_TAG=${{ inputs.docker_username }}/${{ inputs.image_name }}:${{ github.sha }}
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
           COMMIT_ID=${{ github.sha }}
           echo "Image Tag: $IMAGE_TAG"
           docker build -t $IMAGE_TAG .
-          docker tag $IMAGE_TAG ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:${GITHUB_SHA}
+          docker tag $IMAGE_TAG ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:${{ github.sha }}
           docker tag $IMAGE_TAG ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:latest
-          docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}}-${BRANCH_NAME}:${GITHUB_SHA}
+          docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}}-${BRANCH_NAME}:${{ github.sha }}
           docker push ${{ inputs.docker_username }}/${{ inputs.image_name }}-${BRANCH_NAME}:latest
 
   notify:
