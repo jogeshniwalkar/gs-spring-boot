@@ -1,0 +1,76 @@
+name: CodeQL Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '*/5 * * * *'  # Weekly scan on Monday at 3 AM
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write  # required for reporting results to GitHub
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java' ]  # support for multiple languages if needed
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: setting working directory
+        working-directory: complete
+        run: |
+          echo "current dir"
+
+      - name: Build with Maven
+        working-directory: complete
+        run: |
+          chmod +x mvnw
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Build the application
+        working-directory: complete
+        run: |
+          ./mvnw clean install -DskipTests
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          output: sarif-results
+
+      - name: Fail on High/Critical Vulnerabilities
+        run: |
+          SARIF_FILE="sarif-results/${{ matrix.language }}.sarif"
+          echo "Checking SARIF at $SARIF_FILE"
+
+          COUNT=$(jq '[.runs[].results[] | select(.level=="error" or .level=="warning")] | length' "$SARIF_FILE")
+
+          echo "Found $COUNT high/critical vulnerabilities"
+
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Failing job due to high/critical CodeQL findings"
+            exit 1
+          else
+            echo "No high/critical vulnerabilities found"
+          fi
+        shell: bash
