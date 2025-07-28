@@ -19,7 +19,7 @@ jobs:
     uses: jogeshniwalkar/devops_central/.github/workflows/sonarcloud-scan.yml@develop
     secrets: inherit
     with:
-      sonar_project_key: "jogeshniwalkar_gs-spring-boot"
+      sonar_project_key: 'jogeshniwalkar_gs-spring-boot'
 
   docker-build-and-push:
     needs: sonarcloud-scan
