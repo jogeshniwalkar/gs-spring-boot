@@ -13,7 +13,6 @@ jobs:
     uses: jogeshniwalkar/devops_central/.github/workflows/build-and-test.yml@develop
     with:
       java_version: '17'
-      upload_reports: 'true'
 
   sonarcloud-scan:
     needs: build-and-test
