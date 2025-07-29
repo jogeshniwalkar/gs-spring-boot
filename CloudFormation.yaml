@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create IAM User and Group with access to EC2, S3, and EKS
+
+Resources:
+
+  ContractorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Contractors
+      Policies:
+        - PolicyName: ContractorsAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:Describe*
+                  - ec2:StartInstances
+                  - ec2:StopInstances
+                  - ec2:RebootInstances
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+                  - s3:GetBucketLocation
+                  - s3:ListBucket
+                  - s3:GetObject
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - eks:ListClusters
+                  - eks:DescribeCluster
+                  - eks:ListNodegroups
+                  - eks:DescribeNodegroup
+                Resource: "*"
+
+  IamUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: contractor-user
+      Groups:
+        - !Ref ContractorsGroup
+
+  # Optional: Create login credentials for console access (not recommended for automation)
+  # LoginProfile:
+  #   Type: AWS::IAM::LoginProfile
+  #   Properties:
+  #     UserName: !Ref IamUser
+  #     Password: 'TemporaryPassword123!'
+  #     PasswordResetRequired: true
+
+  # Optional: Create access keys for programmatic access (be cautious with this in production)
+  # IamAccessKey:
+  #   Type: AWS::IAM::AccessKey
+  #   Properties:
+  #     UserName: !Ref IamUser
+
+Outputs:
+  IAMUserName:
+    Description: Name of the created IAM user
+    Value: !Ref IamUser
+
+  GroupName:
+    Description: IAM Group name
+    Value: !Ref ContractorsGroup
